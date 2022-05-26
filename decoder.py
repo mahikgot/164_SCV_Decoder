@@ -20,10 +20,21 @@ class Context:
         L = x - H*30
         return H, L
 
+    # def decode(self):
+        # output = []
+        # for element in self.SCV:
+            # H, L = get_HL(element)
 
 class State(ABC):
     def __init__(self):
-        self._mapping = self.prepare_mapping()
+        self.mapping = self.prepare_mapping()
+
+    @property
+    def switched(self) -> bool:
+        return self._switched
+    @switched.setter
+    def switched(self, from_switch: bool) -> None:
+        self._switched = from_switch
 
     @property
     def context(self) -> Context:
@@ -44,6 +55,7 @@ class State(ABC):
         pass
 
     def switch(self, state: State) -> None:
+        state.switched = True
         self.context.setState(state)
     def latch(self, state: State) -> None:
         self.context.setState(state)
