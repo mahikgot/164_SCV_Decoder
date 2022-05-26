@@ -17,16 +17,25 @@ class Context:
         if x <= 29:
             return 0, x
         H = x//30
+        if H >= 30:
+            H = 29
         L = x - H*30
         return H, L
 
+    def get_data(self, scv_list):
+        output = []
+        for i in range(scv_list[0] - 1):
+            if scv_list[i+1] == 900:
+                continue
+            output.extend(self.get_HL(scv_list[i+1]))
+
+        if output[-1] == 29:
+            output.pop()
+        return output
+
     def decode(self):
-        converted = []
         decoded = ''
-        for element in self.SCV:
-            converted.extend(self.get_HL(element))
-        if converted[-1] == 29:
-            converted.pop()
+        converted = self.get_data(self.SCV)
         for element in converted:
             decoded = self._state.decode(decoded, element)
         return decoded
@@ -173,4 +182,4 @@ class Mixed(State):
             self.switch_back()
         return output
 
-print(Context([87, 447, 146, 841, 184]).decode())
+print(Context([10, 893, 864, 877, 749, 739, 496, 844, 393, 900, 822, 22, 716, 545, 596, 130, 458, 768]).decode())
