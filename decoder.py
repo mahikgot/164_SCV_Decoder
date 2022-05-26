@@ -13,21 +13,36 @@ class Context:
         self._state = state
         self._state.context = self
 
-    def get_HL(x):
+    def get_HL(self, x):
         if x <= 29:
             return 0, x
         H = x//30
         L = x - H*30
         return H, L
 
-    # def decode(self):
-        # output = []
-        # for element in self.SCV:
-            # H, L = get_HL(element)
+    def decode(self):
+        converted = []
+        decoded = ''
+        for element in self.SCV:
+            converted.extend(self.get_HL(element))
+        if converted[-1] == 29:
+            converted.pop()
+        for element in converted:
+            decoded = self._state.decode(decoded, element)
+        return decoded
 
 class State(ABC):
     def __init__(self):
         self.mapping = self.prepare_mapping()
+        self.switched = False
+        self.lastclass = None
+
+    @property
+    def lastclass(self) -> str:
+     return self._lastclass
+    @lastclass.setter
+    def lastclass(self, last: str) -> None:
+        self._lastclass = last
 
     @property
     def switched(self) -> bool:
@@ -44,8 +59,8 @@ class State(ABC):
         self._context = context
 
     @property
-    def mapping(self):
-        pass
+    def mapping(self) -> dict:
+        return self._mapping
     @mapping.setter
     def mapping(self, map_dict: dict) -> None:
         self._mapping = map_dict
@@ -54,9 +69,17 @@ class State(ABC):
     def prepare_mapping(self) -> dict:
         pass
 
+    @abstractmethod
+    def decode(self, output: str, num: int) -> None:
+        pass
+
     def switch(self, state: State) -> None:
         state.switched = True
+        state.lastclass = self.__class__.__name__
         self.context.setState(state)
+    def switch_back(self) -> None:
+        self.context.setState(globals()[self.lastclass]())
+
     def latch(self, state: State) -> None:
         self.context.setState(state)
 
@@ -65,6 +88,22 @@ class Alpha(State):
         mapping = dict(zip(range(26), range(65,91)))
         mapping[26] = 32
         return mapping
+
+    def decode(self, output, num):
+        if num == 27:
+            self.latch(Lower())
+        elif num == 28:
+            self.latch(Mixed())
+        elif num == 29:
+            self.switch(Punctuation())
+        else:
+            decoded = self.mapping.get(num)
+            output += chr(decoded)
+
+        if self.switched:
+            self.switch_back()
+        return output
+
 
 class Punctuation(State):
     def prepare_mapping(self):
@@ -76,11 +115,37 @@ class Punctuation(State):
         mapping = dict(zip(range(29), ascii_list))
         return mapping
 
+    def decode(self, output, num):
+        if num == 29:
+            self.Latch(Alpha())
+        else:
+            decoded = self.mapping.get(num)
+            output += chr(decoded)
+
+        if self.switched:
+            self.switch_back()
+        return output
+
 class Lower(State):
     def prepare_mapping(self):
         mapping = dict(zip(range(26), range(97, 123)))
         mapping[26] = 32
         return mapping
+
+    def decode(self, output, num):
+        if num == 27:
+            self.switch(Alpha())
+        elif num == 28:
+            self.latch(Mixed())
+        elif num == 29:
+            self.switch(Punctuation())
+        else:
+            decoded = self.mapping.get(num)
+            output += chr(decoded)
+
+        if self.switched:
+            self.switch_back()
+        return output
 
 class Mixed(State):
     def prepare_mapping(self):
@@ -93,7 +158,19 @@ class Mixed(State):
         mapping[26] = 32
         return mapping
 
-Punctuation()
-Lower()
-Alpha()
-Mixed()
+    def decode(self, output, num):
+        if num == 27:
+            self.Latch(Lower())
+        elif num == 28:
+            self.latch(Alpha())
+        elif num == 29:
+            self.switch(Punctuation())
+        else:
+            decoded = self.mapping.get(num)
+            output += chr(decoded)
+
+        if self.switched:
+            self.switch_back()
+        return output
+
+print(Context([87, 447, 146, 841, 184]).decode())
