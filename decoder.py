@@ -3,10 +3,11 @@ from abc import ABC, abstractmethod
 
 
 class Context:
-    _state = None
 
-    def __init__(self, state: State) -> None:
-        self.setState(state)
+    def __init__(self, SCV) -> None:
+        self._state = None
+        self.SCV = SCV
+        self.setState(Alpha())
 
     def setState(self, state: State):
         self._state = state
