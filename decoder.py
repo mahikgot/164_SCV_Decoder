@@ -41,9 +41,6 @@ class State(ABC):
     @abstractmethod
     def prepare_mapping(self) -> dict:
         pass
-    @abstractmethod
-    def switch(self) -> None:
-        pass
 
     def switch(self, state: State) -> None:
         self.context.setState(state)
