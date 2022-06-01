@@ -47,6 +47,8 @@ def computeD(Lx, s, ne):
         y = Lx[i] * s[i]
     return(sum (x) % 929) 
 
+    ## TO DO ##
+
 def findErrorPolynomial(s):
     s = s
     Lx = [1]
