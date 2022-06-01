@@ -45,7 +45,7 @@ def computeLx(Lx, d, dp, m, Lpx):
         Lx = Lx + padding
 
     Lx = [LxElem - LpxElem for LxElem, LpxElem in zip(Lx, temp)]
-    
+
     return Lx
 
 def computeD(Lx, s, ne, i):
@@ -100,4 +100,4 @@ alpha = 3
 #print(findErrorPolynomial(compSyndrome(msg, ecc_level)))
 #print(computeD([1],[238, 852],0,0))
 
-print(computeLx([1], 238, 1, 1, [1]))
+#print(computeLx([1], 238, 1, 1, [1]))
