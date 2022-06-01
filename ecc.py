@@ -40,20 +40,29 @@ def computeLx(Lx, ne):
 
     ## TO DO ##
 
-
-def computeD(Lx, s, ne):
-    x = [s[0]]
-    for i in range(ne):
-        y = Lx[i] * s[i]
-    
-    if sum(x) > 929:
-        x = sum(x) % 929
+def computeD(Lx,s, ne, i):
+    output = s[0]
+    for k in range(ne):
+        if i-k > 0:
+            output += Lx[k] * s[i-k]
+    if output > 929:
+        output = output % 929
     else:
-        x = sum(x)
+        return output
 
-    return sum (x) 
+# def computeD(Lx, s, ne):
+#     x = [s[0]]
+#     for i in range(ne):
+#         y = Lx[i] * s[i]
+    
+#     if sum(x) > 929:
+#         x = sum(x) % 929
+#     else:
+#         x = sum(x)
 
-    ## TO DO ##
+#     return sum (x) 
+
+#     ## TO DO ##
 
 def findErrorPolynomial(s):
     s = s
