@@ -45,7 +45,13 @@ def computeD(Lx, s, ne):
     x = [s[0]]
     for i in range(ne):
         y = Lx[i] * s[i]
-    return(sum (x) % 929) 
+    
+    if sum(x) > 929:
+        x = sum(x) % 929
+    else:
+        x = sum(x)
+
+    return sum (x) 
 
     ## TO DO ##
 
