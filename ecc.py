@@ -34,13 +34,21 @@ def compSyndrome(m,eccL): #Computes syndrome and then returns s
         s.append(x)
     return s
 
-def computeLx(Lx, ne):
-    Lx = [1]
-    None
+def computeLx(Lx, d, dp, m, Lpx):
+    secondTerm = 0
+    quotient = d * (-1*dp)
+    zeroes = [0 for _ in range(m)]
+    temp = [element * quotient for element in Lpx]
+    temp = zeroes + temp
+    if len(temp) > len(Lx):
+        padding = [0 for _ in range(len(temp)-len(Lx))]
+        Lx = Lx + padding
 
-    ## TO DO ##
+    Lx = [LxElem - LpxElem for LxElem, LpxElem in zip(Lx, temp)]
+    
+    return Lx
 
-def computeD(Lx,s, ne, i):
+def computeD(Lx, s, ne, i):
     output = s[0]
     for k in range(ne):
         if i-k > 0:
@@ -50,20 +58,6 @@ def computeD(Lx,s, ne, i):
     else:
         return output
 
-# def computeD(Lx, s, ne):
-#     x = [s[0]]
-#     for i in range(ne):
-#         y = Lx[i] * s[i]
-    
-#     if sum(x) > 929:
-#         x = sum(x) % 929
-#     else:
-#         x = sum(x)
-
-#     return sum (x) 
-
-#     ## TO DO ##
-
 def findErrorPolynomial(s):
     s = s
     Lx = [1]
@@ -72,11 +66,14 @@ def findErrorPolynomial(s):
     Lp = [1]
     m = 1
     for i in range(len(s)):
-        d = computeD(Lx, s, ne)
+        d = computeD(Lx, s, ne, i)
+        #print(f"d: {d}")
         if d == 0:
             m += 1
         else:
             oldLx = Lx
+            Lx = computeLx(Lx, d, dp, m, Lp)
+            #print(f"L(x): {Lx}")
             if 2*ne <= i:
                 Lp = oldLx
                 ne = i + 1 - ne
@@ -97,8 +94,10 @@ def findErrorPolynomial(s):
 msg = [4, 817, 209, 900, 465, 632]
 ecc_level = 0
 alpha = 3
-
 #print((genPowerAlpha(3,4) * 817 % 929))
 #print(polynomialMsg(msg, 3, 1))
-print(compSyndrome(msg, ecc_level))
+#print(compSyndrome(msg, ecc_level))
 #print(findErrorPolynomial(compSyndrome(msg, ecc_level)))
+#print(computeD([1],[238, 852],0,0))
+
+print(computeLx([1], 238, 1, 1, [1]))
