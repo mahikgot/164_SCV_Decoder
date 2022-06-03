@@ -136,21 +136,21 @@ def computeErrorPolynomials(Lx, s, root_idxs, ne):
     ne = ne
     O = polynomialMult(syndrome, ELP)
     O = O[:ne]
-    print(f"O: {O}")
+    #print(f"O: {O}")
     DLx = derivative(Lx)
-    print(f"DLx: {DLx}")
+    #print(f"DLx: {DLx}")
     e_coeffs = []
     for i in range(len(rootIndx)):
         a = inverse(genPowerAlpha(3, rootIndx[i]))
-        print(f"Root Indices: {rootIndx}")
-        print(f"a: {a}")
+        #print(f"Root Indices: {rootIndx}")
+        #print(f"a: {a}")
         oPoly = polynomialEval(O, a)
         dPoly = polynomialEval(DLx, a)
         e = ((-1 * oPoly) * (inverse(dPoly))) % 929
         e_coeffs.append(e)
     # print(f"ELP: {ELP}")
     # print(f"Syndrome: {syndrome}")
-    print(f"O: {O}")
+    #print(f"O: {O}")
     # print(f"Error Polynomial: {e_coeffs}")
     return e_coeffs
     
