@@ -131,7 +131,7 @@ class Punctuation(State):
 
     def decode(self, output, num):
         if num == 29:
-            self.Latch(Alpha())
+            self.latch(Alpha())
         else:
             decoded = self.mapping.get(num)
             output += chr(decoded)
