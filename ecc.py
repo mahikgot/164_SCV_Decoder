@@ -20,7 +20,7 @@ def genPowerAlpha(alpha,n): # generates powers of alpha
     # p = 929
     # t = 0
     # nextT = 1
-
+    
     # while a > 0:
     #     q = p // a
     #     r = p % a
@@ -52,16 +52,16 @@ def polynomialAdd(A,B):
     n = len(B)
     size = max(m,n)
     sum = [0 for i in range(size)]
-
+    
         # Initialize the product polynomial
-
+        
     for i in range(0, m, 1):
         sum[i] = A[i]
-
+    
         # Take ever term of first polynomial
     for i in range(n):
         sum[i] += B[i]
-
+    
     return sum
 
 def polynomialMult(a,b):
@@ -118,10 +118,10 @@ def computeD(Lx, s, ne, i):
 
     for j in range(ne+1):
         output += (Lx[j] * s[i-j]) % 929
-
+    
     if output >= 929:
         output = output % 929
-
+    
     return output
 
 # def computeD(Lx, s, ne, i):
@@ -148,16 +148,20 @@ def computeLx(Lx, d, dp, m, Lpx):
 
     #print(f"mPadded: {mPadded}")
 
-    mPadded = [(d * inverse(dp)) * k % 929 for k in mPadded]
+    for i in range(len(mPadded)):
+        a = d * inverse(dp) * mPadded[i]
+        if a >= 929:
+            a = a % 929
+        mPadded[i] = a
 
     for i in range(len(mPadded) - len(Lx)):
         Lx.append(0)
-
+    
     for i in range(len(mPadded)):
         mPadded[i] = 929 - mPadded[i]
 
     Lx = polynomialAdd(Lx, mPadded)
-
+    
     for i in range(len(Lx)):
         if Lx[i] >= 929:
             Lx[i] = Lx[i] % 929
@@ -185,12 +189,12 @@ def computeLx(Lx, d, dp, m, Lpx):
 
 #     while len(Lx) != len(a):
 #         Lx.append(0)
-
+    
 #     for i in range(len(Lx)):
 #         Lx[i] = Lx[i] + (929 - a[i])
 
 #     return Lx
-
+    
 
 # def computeLx(Lx, d, dp, m, Lpx):
 #     secondTerm = 0
@@ -226,7 +230,7 @@ def findErrorPolynomial(s):
                 m = 1
             else:
                 m += 1
-
+    
     for i in range(len(Lx)):
         if Lx[i] >= 929:
             Lx[i] = Lx[i] % 929
@@ -244,7 +248,7 @@ def chienSearch(Lx, ne):
 
         if b >= 929:
             b = b % 929
-
+        
         if b == 0:
             #print(f"Root found at index {i}")
             c = genPowerAlpha(3,i)
@@ -260,7 +264,7 @@ def chienSearch(Lx, ne):
     ELP_roots = ELP_roots[:ne]
     # print(f"ELP roots: {ELP_roots}")
     return root_idxs[:ne], index_locations[:ne]
-
+                
 def computeErrorPolynomials(Lx, s, root_idxs, ne):
     ELP = Lx
     syndrome = s
@@ -287,7 +291,7 @@ def computeErrorPolynomials(Lx, s, root_idxs, ne):
     # print(f"Error Polynomial: {e_coeffs}")
     # print(f"DLx: {DLx}")
     return e_coeffs
-
+    
 def computeTrueMessage(m, index_location, e_coeffs):
     if len(index_location) == 0:
         return m
@@ -299,7 +303,7 @@ def computeTrueMessage(m, index_location, e_coeffs):
     e_coeffs = e_coeffs
     e_x = [0 for _ in range(len(m))]
     msg = m
-
+    
     for i in range(len(e_coeffs)):
         e_x[index_location[i]] = e_coeffs[i]
     e_x.reverse()
@@ -313,7 +317,7 @@ def computeTrueMessage(m, index_location, e_coeffs):
         if a >= 929:
             a = a % 929
         true_message.append(a)
-
+    
     return true_message
 
     ## TO DO ##
@@ -371,7 +375,7 @@ for i in range(entries):
     #print(msg)
     msg = [int(x) for x in msg]
     #print(msg)
-
+    
     s = computeSyndrome(msg, ecc_level)
     ELP, ne = findErrorPolynomial(s)
     root_idxs, index_locations = chienSearch(ELP, ne)
@@ -385,6 +389,6 @@ for i in range(entries):
     y = true_message
     y = [str(x) for x in y]
     y = " ".join(y)
-
+    
     print(f"{len(e_coeffs)} {y}")
     print(f"{decoded_message}")
