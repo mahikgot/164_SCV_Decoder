@@ -9,7 +9,7 @@ def genPowerAlpha(alpha,n): # generates powers of alpha
         x = alpha ** n
         if x < 929:
             return x
-        if x > 929:
+        if x >= 929:
             y = x % 929
             return y
 
@@ -45,7 +45,7 @@ def polynomialMult(a,b):
             res[o1+o2] += i1*i2
     
     for i in range(len(res)):
-        if res[i] > 929:
+        if res[i] >= 929:
             res[i] = res[i] % 929
 
     return res
@@ -54,7 +54,7 @@ def polynomialEval(poly, x):
     output = 0
     for i in range(len(poly)):
         a = poly[i] * (x ** i)
-        if a > 929:
+        if a >= 929:
             a = a % 929
         output += a
     return output
@@ -63,7 +63,7 @@ def derivative(a):
     dPolynomial = [a[i] * i for i in range(1, len(a))]
 
     for i in range(len(dPolynomial)):
-        if dPolynomial[i] > 929:
+        if dPolynomial[i] >= 929:
             dPolynomial[i] = dPolynomial[i] % 929
     return dPolynomial
 
@@ -79,7 +79,7 @@ def polynomialMsg(msg,alpha,s): #does polynomial multiplication
         degree -= 1
     return msg_poly
 
-def computeSyndromerome(m,eccL): #Computes syndrome and then returns s
+def computeSyndrome(m,eccL): #Computes syndrome and then returns s
     ecc_level = eccL
     ecc_cword_count = int(math.pow(2,(ecc_level+1)))
     s = []
@@ -96,7 +96,7 @@ def computeD(Lx, s, ne, i):
     for j in range(ne+1):
         output += (Lx[j] * s[i-j]) % 929
     
-    if output > 929:
+    if output >= 929:
         output = output % 929
     
     return output
@@ -136,7 +136,7 @@ def computeLx(Lx, d, dp, m, Lpx):
     Lx = polynomialAdd(Lx, mPadded)
     
     for i in range(len(Lx)):
-        if Lx[i] > 929:
+        if Lx[i] >= 929:
             Lx[i] = Lx[i] % 929
 
     return Lx
@@ -204,6 +204,10 @@ def findErrorPolynomial(s):
             else:
                 m += 1
     
+    for i in range(len(Lx)):
+        if Lx[i] >= 929:
+            Lx[i] = Lx[i] % 929
+
     return Lx, ne
 
 def chienSearch(Lx, ne):
@@ -215,7 +219,7 @@ def chienSearch(Lx, ne):
         a = genPowerAlpha(3,i)
         b = polynomialEval(Lx, a)
 
-        if b > 929:
+        if b >= 929:
             b = b % 929
         
         if b == 0:
@@ -283,7 +287,7 @@ def computeTrueMessage(m, index_location, e_coeffs):
         a = msg[i] - e_x[i]
         if a < 0:
             a = a % 929
-        if a > 929:
+        if a >= 929:
             a = a % 929
         true_message.append(a)
     
@@ -298,11 +302,13 @@ def computeTrueMessage(m, index_location, e_coeffs):
 # # ecc_level = 3
 # # msg = [62, 574, 360, 416, 34, 518, 300, 416, 828, 617, 19, 795, 3, 26, 834, 810, 823, 816, 807, 117, 267, 387, 27, 327, 567, 627, 116, 570, 458, 237, 10, 798, 13, 190, 26, 544, 574, 330, 236, 10, 626, 290, 375, 26, 414, 19, 13, 720, 794, 510, 697, 414, 26, 540, 836, 19, 330, 236, 364, 390, 518, 329, 142, 288, 72, 2, 443, 16, 195, 703, 62, 267, 665, 239, 523, 651, 45, 277]
 # # ecc_level = 2
+# msg = [7, 87, 447, 146, 841, 184, 905, 879, 523]
+# ecc_level = 0
 # alpha = 3
 # print(f"msg: {msg}, ecc_level: {ecc_level}, alpha: {alpha}")
 
 # # # Compute Syndromes
-# s = computeSyndromerome(msg, ecc_level)
+# s = computeSyndrome(msg, ecc_level)
 # print(f"Syndromes: {s}")
 
 # ELP, ne = findErrorPolynomial(s)
@@ -342,13 +348,15 @@ for i in range(entries):
     #print(msg)
     msg = [int(x) for x in msg]
     #print(msg)
-
-    s = computeSyndromerome(msg, ecc_level)
+    
+    s = computeSyndrome(msg, ecc_level)
     ELP, ne = findErrorPolynomial(s)
     root_idxs, index_locations = chienSearch(ELP, ne)
     e_coeffs = computeErrorPolynomials(ELP, s, index_locations, ne)
     true_message = computeTrueMessage(msg, index_locations, e_coeffs)
     decoded_message = decoder.decodeMsg(true_message)
+
+    print(f"Done with {i+1}")
 
     print(f"Case #{i+1}")
     y = true_message
