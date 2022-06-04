@@ -187,4 +187,8 @@ class Mixed(State):
             self.switch_back()
         return output
 
-print(Context([10, 893, 864, 877, 749, 739, 496, 844, 393, 900, 822, 22, 716, 545, 596, 130, 458, 768]).decode())
+# print(Context([10, 893, 864, 877, 749, 739, 496, 844, 393, 900, 822, 22, 716, 545, 596, 130, 458, 768]).decode())
+
+def decodeMsg(scv_list):
+    context = Context(scv_list)
+    return context.decode()
