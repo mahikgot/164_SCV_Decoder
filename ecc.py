@@ -47,16 +47,16 @@ def polynomialAdd(A,B):
     n = len(B)
     size = max(m,n)
     sum = [0 for i in range(size)]
-
+    
         # Initialize the product polynomial
-
+        
     for i in range(0, m, 1):
         sum[i] = A[i]
-
+    
         # Take ever term of first polynomial
     for i in range(n):
         sum[i] += B[i]
-
+    
     return sum
 
 def polynomialMult(a,b):
@@ -65,7 +65,11 @@ def polynomialMult(a,b):
     res = [0]*(len(s1)+len(s2)-1)
     for o1,i1 in enumerate(s1):
         for o2,i2 in enumerate(s2):
-            res[o1+o2] += i1*i2 % 929
+            res[o1+o2] += i1*i2
+    
+    for i in range(len(res)):
+        if res[i] >= 929:
+            res[i] = res[i] % 929
 
     return res
 
@@ -88,7 +92,7 @@ def derivative(a):
 
 
 # def computerLe():
-
+    
 
 # def computeT(ne):
 #     T = [1]
@@ -108,7 +112,7 @@ def chienSearch(Lx, ne):
 
         if b >= 929:
             b = b % 929
-
+        
         if b == 0:
             #print(f"Root found at index {i}")
             c = genPowerAlpha(3,i)
@@ -124,7 +128,7 @@ def chienSearch(Lx, ne):
     ELP_roots = ELP_roots[:ne]
     print(f"ELP roots: {ELP_roots}")
     return root_idxs[:ne], index_locations[:ne]
-
+                
 def computeErrorPolynomials(Lx, s, root_idxs, ne):
     ELP = Lx
     syndrome = s
@@ -146,10 +150,11 @@ def computeErrorPolynomials(Lx, s, root_idxs, ne):
         e_coeffs.append(e)
     # print(f"ELP: {ELP}")
     # print(f"Syndrome: {syndrome}")
-    #print(f"O: {O}")
+    print(f"O: {O}")
     # print(f"Error Polynomial: {e_coeffs}")
+    print(f"DLx: {DLx}")
     return e_coeffs
-
+    
 def computeTrueMessage(m, index_location, e_coeffs):
     if len(index_location) == 0:
         return m
@@ -161,7 +166,7 @@ def computeTrueMessage(m, index_location, e_coeffs):
     e_coeffs = e_coeffs
     e_x = [0 for _ in range(len(m))]
     msg = m
-
+    
     for i in range(len(e_coeffs)):
         e_x[index_location[i]] = e_coeffs[i]
     e_x.reverse()
@@ -175,9 +180,9 @@ def computeTrueMessage(m, index_location, e_coeffs):
         if a >= 929:
             a = a % 929
         true_message.append(a)
-
+    
     return true_message
-
+    
 
 def computeLx(Lx, d, dp, m, Lp):
     Lx = Lx
@@ -185,17 +190,27 @@ def computeLx(Lx, d, dp, m, Lp):
     Lp = Lp
     d = d
     m = m
-    q = -1 * (d * inverse(dp)) % 929 # d/dp
-    mPadded = [0 for _ in range(m)]
+    mPadded = []
+    q = d * inverse(dp) % 929
+    print(f"q: {q}")  # d/dp
+
+    for i in range(m):
+        mPadded.append(0)
     mPadded.append(q)
 
     #print(mPadded)
 
     a = polynomialMult(Lp, mPadded)
-    b = polynomialAdd(Lx, (-1*a))
+    print(f"a: {a}")
 
-    return b
+    while len(Lx) != len(a):
+        Lx.append(0)
+    
+    for i in range(len(Lx)):
+        Lx[i] = Lx[i] + (929 - a[i])
 
+    return Lx
+    
 
 # def computeLx(Lx, d, dp, m, Lpx):
 #     secondTerm = 0
@@ -230,7 +245,7 @@ def findErrorPolynomial(s):
     m = 1
     for i in range(len(s)):
         d = computeD(Lx, s, ne, i)
-        #print(f"d: {d}")
+        print(f"d: {d}")
         if d == 0:
             m += 1
         else:
@@ -244,17 +259,16 @@ def findErrorPolynomial(s):
                 m = 1
             else:
                 m += 1
-
+    
     return Lx, ne
 
     ## TO DO ##
 
-
 ################ TESTER ###############
 
 # Inputs
-msg = [10, 813, 864, 477, 749, 739, 196, 844, 393, 900, 822, 22, 716, 545, 596, 130, 458, 0]
-ecc_level = 2
+msg = [76, 819, 612, 450, 793, 720, 570, 414, 26, 824, 827, 810, 823, 816, 823, 834, 810, 807, 567, 27, 417, 207, 476, 597, 357, 27, 236, 870, 847, 808, 364, 390, 518, 326, 820, 626, 848, 808, 458, 308, 538, 508, 458, 308, 536, 813, 17, 255, 3, 26, 50, 19, 799, 132, 13, 320, 792, 133, 98, 396, 13, 780, 320, 804, 13, 206, 12, 38, 356, 304, 544, 375, 19, 13, 86, 398, 191, 805, 483, 94, 317, 317, 308, 168, 355, 672, 130, 244, 741, 241, 345, 862]
+ecc_level = 3
 # msg = [4, 817, 209, 900, 465, 632]
 # ecc_level = 0
 alpha = 3
@@ -265,15 +279,15 @@ s = computeSyndromerome(msg, ecc_level)
 print(f"Syndromes: {s}")
 
 # Find ELP (not yet implemented)
-# ELP = [1, 902]
+# ELP = [1, 902] 
 # ne = 1
 
-ELP = [1, 166, 738, 31, 922, 0, 0, 0]
-ne = 4
-print(f"ELP: {ELP}")
-
-# ELP, ne = findErrorPolynomial(s)
+# ELP = [1, 524, 253, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+# ne = 8
 # print(f"ELP: {ELP}")
+
+ELP, ne = findErrorPolynomial(s)
+print(f"ELP: {ELP}")
 
 # Find ELP roots
 root_idxs, index_locations = chienSearch(ELP, ne)
