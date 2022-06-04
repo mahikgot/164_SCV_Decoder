@@ -174,7 +174,7 @@ class Mixed(State):
 
     def decode(self, output, num):
         if num == 27:
-            self.Latch(Lower())
+            self.latch(Lower())
         elif num == 28:
             self.latch(Alpha())
         elif num == 29:
