@@ -12,11 +12,40 @@ def genPowerAlpha(alpha,n): # generates powers of alpha
             y = x % 929
             return y
 
-def inverse(a): #Helper function to compute the inverse of a number within the field
-    n = 929
-    for x in range(n):
-        if (a * x) % n == 1:
-            return x
+# def inverse(a): #Helper function to compute the inverse of a number within the field
+    # n = 929
+    # for x in range(n):
+    #     if (a * x) % n == 1:
+    #         return x
+    # p = 929
+    # t = 0
+    # nextT = 1
+    
+    # while a > 0:
+    #     q = p // a
+    #     r = p % a
+    #     t = t - q * nextT
+    #     nextT = t
+    #     p = a
+    #     a = r
+    #     nextT = t
+    # t = t % p
+
+    # return t
+
+def egcd(a, b):
+    if a == 0:
+        return (b, 0, 1)
+    else:
+        g, y, x = egcd(b % a, a)
+        return (g, x - (b // a) * y, y)
+
+def inverse(a, m=929):
+    g, x, y = egcd(a, m)
+    if g != 1:
+        raise Exception('modular inverse does not exist')
+    else:
+        return x % m
 
 def polynomialAdd(A,B):
     m = len(A)
@@ -357,7 +386,7 @@ for i in range(entries):
 
     #print(f"Done with {i+1}")
 
-    print(f"Case #{i+1}")
+    print(f"Case #{i+1}:")
     y = true_message
     y = [str(x) for x in y]
     y = " ".join(y)
