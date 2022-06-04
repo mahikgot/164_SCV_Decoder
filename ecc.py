@@ -47,16 +47,16 @@ def polynomialAdd(A,B):
     n = len(B)
     size = max(m,n)
     sum = [0 for i in range(size)]
-    
+
         # Initialize the product polynomial
-        
+
     for i in range(0, m, 1):
         sum[i] = A[i]
-    
+
         # Take ever term of first polynomial
     for i in range(n):
         sum[i] += B[i]
-    
+
     return sum
 
 def polynomialMult(a,b):
@@ -65,11 +65,7 @@ def polynomialMult(a,b):
     res = [0]*(len(s1)+len(s2)-1)
     for o1,i1 in enumerate(s1):
         for o2,i2 in enumerate(s2):
-            res[o1+o2] += i1*i2
-    
-    for i in range(len(res)):
-        if res[i] >= 929:
-            res[i] = res[i] % 929
+            res[o1+o2] += i1*i2 % 929
 
     return res
 
@@ -92,7 +88,7 @@ def derivative(a):
 
 
 # def computerLe():
-    
+
 
 # def computeT(ne):
 #     T = [1]
@@ -112,7 +108,7 @@ def chienSearch(Lx, ne):
 
         if b >= 929:
             b = b % 929
-        
+
         if b == 0:
             #print(f"Root found at index {i}")
             c = genPowerAlpha(3,i)
@@ -128,7 +124,7 @@ def chienSearch(Lx, ne):
     ELP_roots = ELP_roots[:ne]
     print(f"ELP roots: {ELP_roots}")
     return root_idxs[:ne], index_locations[:ne]
-                
+
 def computeErrorPolynomials(Lx, s, root_idxs, ne):
     ELP = Lx
     syndrome = s
@@ -153,7 +149,7 @@ def computeErrorPolynomials(Lx, s, root_idxs, ne):
     #print(f"O: {O}")
     # print(f"Error Polynomial: {e_coeffs}")
     return e_coeffs
-    
+
 def computeTrueMessage(m, index_location, e_coeffs):
     if len(index_location) == 0:
         return m
@@ -165,7 +161,7 @@ def computeTrueMessage(m, index_location, e_coeffs):
     e_coeffs = e_coeffs
     e_x = [0 for _ in range(len(m))]
     msg = m
-    
+
     for i in range(len(e_coeffs)):
         e_x[index_location[i]] = e_coeffs[i]
     e_x.reverse()
@@ -179,9 +175,9 @@ def computeTrueMessage(m, index_location, e_coeffs):
         if a >= 929:
             a = a % 929
         true_message.append(a)
-    
+
     return true_message
-    
+
 
 def computeLx(Lx, d, dp, m, Lp):
     Lx = Lx
@@ -202,7 +198,7 @@ def computeLx(Lx, d, dp, m, Lp):
     b = polynomialAdd(Lx, (-1*a))
 
     return b
-    
+
 
 # def computeLx(Lx, d, dp, m, Lpx):
 #     secondTerm = 0
@@ -251,12 +247,12 @@ def findErrorPolynomial(s):
                 m = 1
             else:
                 m += 1
-    
+
     return Lx, ne
 
     ## TO DO ##
 
-    
+
 ################ TESTER ###############
 
 # Inputs
@@ -272,10 +268,10 @@ s = computeSyndromerome(msg, ecc_level)
 print(f"Syndromes: {s}")
 
 # Find ELP (not yet implemented)
-# ELP = [1, 902] 
+# ELP = [1, 902]
 # ne = 1
 
-ELP = [1, 166, 738, 31, 922, 0, 0, 0] 
+ELP = [1, 166, 738, 31, 922, 0, 0, 0]
 ne = 4
 print(f"ELP: {ELP}")
 
