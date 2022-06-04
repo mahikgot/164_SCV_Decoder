@@ -185,11 +185,8 @@ def computeLx(Lx, d, dp, m, Lp):
     Lp = Lp
     d = d
     m = m
-    mPadded = []
     q = -1 * (d * inverse(dp)) % 929 # d/dp
-
-    for i in range(m):
-        mPadded.append(0)
+    mPadded = [0 for _ in range(m)]
     mPadded.append(q)
 
     #print(mPadded)
