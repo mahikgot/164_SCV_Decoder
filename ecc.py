@@ -356,7 +356,7 @@ for i in range(entries):
     true_message = computeTrueMessage(msg, index_locations, e_coeffs)
     decoded_message = decoder.decodeMsg(true_message)
 
-    print(f"Done with {i+1}")
+    #print(f"Done with {i+1}")
 
     print(f"Case #{i+1}")
     y = true_message
@@ -364,4 +364,4 @@ for i in range(entries):
     y = " ".join(y)
     
     print(f"{len(e_coeffs)} {y}")
-    print(f"Decoded Message: {decoded_message}")
+    print(f"{decoded_message}")
