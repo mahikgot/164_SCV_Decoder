@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 
 class Context:
-
+    #State Machine Global Context
     def __init__(self, SCV) -> None:
         self._state = None
         self.SCV = SCV
@@ -37,10 +37,15 @@ class Context:
         decoded = ''
         converted = self.get_data(self.SCV)
         for element in converted:
+            #state.decode method handles state switching and latching
             decoded = self._state.decode(decoded, element)
         return decoded
 
 class State(ABC):
+    #Abstract Class named State for the different Submodes
+    #Each State have a reference to the Context Class, being able to switch its state
+    #Each have their own mapping dictionary
+    #Decode methods are different for each submode, this method also handles switching and latching between states
     def __init__(self):
         self.mapping = self.prepare_mapping()
         self.switched = False
