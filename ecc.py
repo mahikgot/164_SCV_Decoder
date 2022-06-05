@@ -1,7 +1,7 @@
 import math
 import decoder
 
-def genPowerAlpha(alpha,n): # generates powers of alpha
+def genPowerAlpha(alpha, n): # generates powers of alpha
     if n == 0:
         return 1
     else:
@@ -33,21 +33,21 @@ def genPowerAlpha(alpha,n): # generates powers of alpha
 
     # return t
 
-def egcd(a, b):
+def egcd(a, b): #Helper function to help inverse()
     if a == 0:
         return (b, 0, 1)
     else:
         g, y, x = egcd(b % a, a)
         return (g, x - (b // a) * y, y)
 
-def inverse(a, m=929):
-    g, x, y = egcd(a, m)
+def inverse(a, m = 929): #Helper function to compute the inverse of a number within the field
+    g, x, y = egcd(a, m) 
     if g != 1:
         raise Exception('modular inverse does not exist')
     else:
         return x % m
 
-def polynomialAdd(A,B):
+def polynomialAdd(A,B): #Helper function to add polynomials
     m = len(A)
     n = len(B)
     size = max(m,n)
@@ -64,7 +64,7 @@ def polynomialAdd(A,B):
     
     return sum
 
-def polynomialMult(a,b):
+def polynomialMult(a,b): #Helper function to multiply polynomials
     s1 = a
     s2 = b
     res = [0]*(len(s1)+len(s2)-1)
@@ -73,7 +73,7 @@ def polynomialMult(a,b):
             res[o1+o2] += i1*i2 % 929
     return res
 
-def polynomialEval(poly, x):
+def polynomialEval(poly, x): #Evaluates a polynomial at a given x
     output = 0
     for i in range(len(poly)):
         a = poly[i] * (x ** i)
@@ -82,7 +82,7 @@ def polynomialEval(poly, x):
         output += a
     return output
 
-def derivative(a):
+def derivative(a): #Helper function to compute the derivative of a polynomial
     dPolynomial = [a[i] * i for i in range(1, len(a))]
 
     for i in range(len(dPolynomial)):
@@ -90,7 +90,7 @@ def derivative(a):
             dPolynomial[i] = dPolynomial[i] % 929
     return dPolynomial
 
-def polynomialMsg(msg,alpha,s): #does polynomial multiplication
+def polynomialMsg(msg,alpha,s): #Turns message into a polynomial
     msg_poly = []
     degree = len(msg)-1
     for i in range(len(msg)):
@@ -102,7 +102,7 @@ def polynomialMsg(msg,alpha,s): #does polynomial multiplication
         degree -= 1
     return msg_poly
 
-def computeSyndrome(m,eccL): #Computes syndrome and then returns s
+def computeSyndrome(m,eccL): #Computes syndrome and then returns the syndromes
     ecc_level = eccL
     ecc_cword_count = int(math.pow(2,(ecc_level+1)))
     s = []
@@ -113,7 +113,7 @@ def computeSyndrome(m,eccL): #Computes syndrome and then returns s
         s.append(x)
     return s
 
-def computeD(Lx, s, ne, i):
+def computeD(Lx, s, ne, i): #Helper function for computing ELP, computes discrepancy
     output = 0
 
     for j in range(ne+1):
@@ -134,7 +134,7 @@ def computeD(Lx, s, ne, i):
 #     else:
 #         return output
 
-def computeLx(Lx, d, dp, m, Lpx):
+def computeLx(Lx, d, dp, m, Lpx): #Helper function for computing ELP, computes lambda
     Lx = Lx
     dp = dp
     Lpx = Lpx
@@ -208,7 +208,7 @@ def computeLx(Lx, d, dp, m, Lpx):
 #     Lx = [LxElem - LpxElem for LxElem, LpxElem in zip(Lx, temp)]
 #     return Lx
 
-def findErrorPolynomial(s):
+def findErrorPolynomial(s): #Helper function to find ELP
     Lx = [1]
     ne = 0
     dp = 1
@@ -237,7 +237,7 @@ def findErrorPolynomial(s):
 
     return Lx, ne
 
-def chienSearch(Lx, ne):
+def chienSearch(Lx, ne): #Finds the roots of the ELP
     root_idxs = []
     ELP_roots = []
     index_locations = []
@@ -265,7 +265,7 @@ def chienSearch(Lx, ne):
     # print(f"ELP roots: {ELP_roots}")
     return root_idxs[:ne], index_locations[:ne]
                 
-def computeErrorPolynomials(Lx, s, root_idxs, ne):
+def computeErrorPolynomials(Lx, s, root_idxs, ne): #Computes the error polynomial
     ELP = Lx
     syndrome = s
     rootIndx = root_idxs
@@ -292,7 +292,7 @@ def computeErrorPolynomials(Lx, s, root_idxs, ne):
     # print(f"DLx: {DLx}")
     return e_coeffs
     
-def computeTrueMessage(m, index_location, e_coeffs):
+def computeTrueMessage(m, index_location, e_coeffs): #Computes the true message
     if len(index_location) == 0:
         return m
     if len(index_location) != len(e_coeffs):
@@ -320,21 +320,35 @@ def computeTrueMessage(m, index_location, e_coeffs):
     
     return true_message
 
-    ## TO DO ##
+def stringify(a): #By some chances, escape characters are appearing in the OJ, to fix this, this function is used
+    a = a.replace("\n", r"\n")
+    a = a.replace("\t", r"\t")
+    a = a.replace("\b", r"\b")
+    a = a.replace("\f", r"\f")
+    a = a.replace("\r", r"\r")
+    a = a.replace("\v", r"\v")
+    
+    return a
+ 
+################ TESTER ############### #This part is for manually testing inputs, debugging, etc
 
-################ TESTER ###############
+# Inputs (typed in manually)
+# ecc_level = input()
+# ecc_level = ecc_level.split()
+# ecc_level = [int(x) for x in ecc_level]
+# ecc_level = ecc_level[0]
+# msg = input()
+# msg = msg.split()
+# msg = [int(x) for x in msg]
 
-# # Inputs
-# # msg = [76, 819, 612, 450, 793, 720, 570, 414, 26, 824, 827, 810, 823, 816, 823, 834, 810, 807, 567, 27, 417, 207, 476, 597, 357, 27, 236, 870, 847, 808, 364, 390, 518, 326, 820, 626, 848, 808, 458, 308, 538, 508, 458, 308, 536, 813, 17, 255, 3, 26, 50, 19, 799, 132, 13, 320, 792, 133, 98, 396, 13, 780, 320, 804, 13, 206, 12, 38, 356, 304, 544, 375, 19, 13, 86, 398, 191, 805, 483, 94, 317, 317, 308, 168, 355, 672, 130, 244, 741, 241, 345, 862]
-# # ecc_level = 3
-# # msg = [62, 574, 360, 416, 34, 518, 300, 416, 828, 617, 19, 795, 3, 26, 834, 810, 823, 816, 807, 117, 267, 387, 27, 327, 567, 627, 116, 570, 458, 237, 10, 798, 13, 190, 26, 544, 574, 330, 236, 10, 626, 290, 375, 26, 414, 19, 13, 720, 794, 510, 697, 414, 26, 540, 836, 19, 330, 236, 364, 390, 518, 329, 142, 288, 72, 2, 443, 16, 195, 703, 62, 267, 665, 239, 523, 651, 45, 277]
-# # ecc_level = 2
-# msg = [7, 87, 447, 146, 841, 184, 905, 879, 523]
-# ecc_level = 0
+# # Inputs (as list)
+# #msg = [7, 87, 447, 146, 841, 184, 905, 879, 523]
+# #ecc_level = 3
+
 # alpha = 3
 # print(f"msg: {msg}, ecc_level: {ecc_level}, alpha: {alpha}")
 
-# # # Compute Syndromes
+# # Compute Syndromes
 # s = computeSyndrome(msg, ecc_level)
 # print(f"Syndromes: {s}")
 
@@ -356,7 +370,7 @@ def computeTrueMessage(m, index_location, e_coeffs):
 # decoded_message = decoder.decodeMsg(true_message)
 # print(f"Decoded Message: {decoded_message}")
 
-################## PROCESSING ######################
+################## PROCESSING ###################### #This is for processing input data
 
 entries = int(input())
 alpha = 3
@@ -390,5 +404,7 @@ for i in range(entries):
     y = [str(x) for x in y]
     y = " ".join(y)
     
+    decoded_message = stringify(decoded_message)
+
     print(f"{len(e_coeffs)} {y}")
     print(f"{decoded_message}")
