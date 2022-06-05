@@ -1,6 +1,21 @@
 import math
 import decoder
 
+#########################################################################################################
+# Error corrector program made by:
+# Steven Esguerra
+# 2019 - 05959
+# CoE 164 - FWX
+#
+# In order for this program to work, the following files must be in the same directory as this file:
+# decoder.py (or whatever the name of the decoder file is)
+#                             
+# Decoder program made by:
+# Mark Guiang
+# 2019 - 
+# CoE 164 - FWX
+#########################################################################################################
+
 def genPowerAlpha(alpha, n): # generates powers of alpha
     if n == 0:
         return 1
